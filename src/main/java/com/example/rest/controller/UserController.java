@@ -1,7 +1,9 @@
 package com.example.rest.controller;
 
+import com.example.rest.entity.Portfolio;
 import com.example.rest.entity.UserEntity;
 import com.example.rest.exception.ResourceNotFoundException;
+import com.example.rest.repository.PortfolioRepository;
 import com.example.rest.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,15 +12,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
 public class UserController {
 
     private final UserRepository userRepository;
+    private final PortfolioRepository portfolioRepository;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, PortfolioRepository portfolioRepository) {
         this.userRepository = userRepository;
+        this.portfolioRepository = portfolioRepository;
     }
 
     @GetMapping("/users")
@@ -49,6 +54,17 @@ public class UserController {
         userEntity.setPassword(userDetails.getPassword());
         final UserEntity updatedUser = userRepository.save(userEntity);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    @PutMapping("/users/{id}/portfolio/{portfolio_id}")
+    public UserEntity assignPortfolioToUser(@PathVariable(value = "id") Long userId,
+                                                 @PathVariable Long portfolio_id) throws ResourceNotFoundException {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
+        Portfolio portfolio = portfolioRepository.findById(portfolio_id)
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found for this id :: " + portfolio_id));
+        portfolio.assignUser(userEntity);
+        return userRepository.save(userEntity);
     }
 
     @DeleteMapping("/users/{id}")

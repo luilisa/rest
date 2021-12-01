@@ -50,14 +50,14 @@ public class StockController {
         stock.setHighPrice(stockDetails.getHighPrice());
         stock.setLowPrice(stockDetails.getLowPrice());
         stock.setCurrentPrice(stockDetails.getCurrentPrice());
-        stock.setCompanyId(stockDetails.getCompanyId());
+        stock.setCompany(stockDetails.getCompany());
         stock.setVolume(stockDetails.getVolume());
         final Stock updatedStock = stockRepository.save(stock);
         return ResponseEntity.ok(updatedStock);
     }
 
     @DeleteMapping("/stocks/{id}")
-    public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long stockId)
+    public Map<String, Boolean> deleteStock(@PathVariable(value = "id") Long stockId)
             throws ResourceNotFoundException {
         Stock stock = stockRepository.findById(stockId)
                 .orElseThrow(() -> new ResourceNotFoundException("Stock not found for this id :: " + stockId));

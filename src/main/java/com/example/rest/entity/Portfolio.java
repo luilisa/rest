@@ -1,7 +1,10 @@
 package com.example.rest.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "portfolio")
@@ -11,18 +14,19 @@ public class Portfolio {
     private double profitability;
     private Timestamp creationDate;
     private String name;
-    private long stockId;
-    private long userId;
+    private UserEntity userEntity;
+    private List<Stock> stocks;
 
     public Portfolio() {
     }
 
-    public Portfolio(double profitability, Timestamp creationDate, String name, long stockId, long userId) {
+
+    public Portfolio(double profitability, Timestamp creationDate, String name, List<Stock> stocks, UserEntity userEntity) {
         this.profitability = profitability;
         this.creationDate = creationDate;
         this.name = name;
-        this.stockId = stockId;
-        this.userId = userId;
+        this.stocks = stocks;
+        this.userEntity = userEntity;
     }
 
     @Id
@@ -34,7 +38,7 @@ public class Portfolio {
         this.id = id;
     }
 
-    @Column(name = "profitability")
+    @Column(name = "profitability", nullable = false)
     public double getProfitability() {
         return profitability;
     }
@@ -42,7 +46,7 @@ public class Portfolio {
         this.profitability = profitability;
     }
 
-    @Column(name = "creation_date", nullable = false)
+    @Column(name = "creation_date")
     public Timestamp getCreationDate() {
         return creationDate;
     }
@@ -58,19 +62,34 @@ public class Portfolio {
         this.name = name;
     }
 
-    @Column(name = "stock_id")
-    public long getStockId() {
-        return stockId;
+    @ManyToMany
+    @JoinTable(
+            name = "stocks_added",
+            joinColumns = @JoinColumn(name = "portfolio_id"),
+            inverseJoinColumns = @JoinColumn(name = "stock_id")
+    )
+    public List<Stock> getStocks() {
+        return stocks;
     }
-    public void setStockId(long stockId) {
-        this.stockId = stockId;
+    public void setStocks(List<Stock> stocks) {
+        this.stocks = stocks;
     }
 
-    @Column(name = "user_id")
-    public long getUserId() {
-        return userId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonIgnore
+    public UserEntity getUserEntity() {
+        return userEntity;
     }
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
+    }
+
+    public void addStock(Stock stock) {
+        stocks.add(stock);
+    }
+
+    public void assignUser(UserEntity userEntity) {
+        this.userEntity = userEntity;
     }
 }

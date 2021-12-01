@@ -1,6 +1,7 @@
 package com.example.rest.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "company")
@@ -13,14 +14,16 @@ public class Company {
     private long marketCap;
     private int ipoYear;
     private String country;
+    private Stock stock;
 
-    public Company(String symbol, String sector, String name, long marketCap, int ipoYear, String country) {
+    public Company(String symbol, String sector, String name, long marketCap, int ipoYear, String country, Stock stock) {
         this.symbol = symbol;
         this.sector = sector;
         this.name = name;
         this.marketCap = marketCap;
         this.ipoYear = ipoYear;
         this.country = country;
+        this.stock = stock;
     }
 
     public Company() {
@@ -87,4 +90,13 @@ public class Company {
     public void setCountry(String country) {
         this.country = country;
     }
+
+    @OneToOne(mappedBy = "company")
+    public Stock getStock() {
+        return stock;
+    }
+    public void setStock(Stock stock) {
+        this.stock = stock;
+    }
+
 }

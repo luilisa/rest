@@ -1,9 +1,10 @@
 package com.example.rest.entity;
 
-import org.apache.tomcat.jni.Time;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "stock")
@@ -11,23 +12,27 @@ public class Stock {
 
     private long id;
     private Timestamp date;
+    private String symbol;
     private double openPrice;
     private double closePrice;
     private double highPrice;
     private double lowPrice;
     private double currentPrice;
-    private long companyId;
+    private Company company;
     private int volume;
+    private List<Portfolio> portfolios;
 
-    public Stock(Timestamp date, double openPrice, double closePrice, double highPrice, double lowPrice, double currentPrice, long companyId, int volume) {
+    public Stock(Timestamp date, String symbol, double openPrice, double closePrice, double highPrice, double lowPrice, double currentPrice, Company company, int volume, List<Portfolio> portfolios) {
         this.date = date;
+        this.symbol = symbol;
         this.openPrice = openPrice;
         this.closePrice = closePrice;
         this.highPrice = highPrice;
         this.lowPrice = lowPrice;
         this.currentPrice = currentPrice;
-        this.companyId = companyId;
+        this.company = company;
         this.volume = volume;
+        this.portfolios = portfolios;
     }
 
     public Stock() {
@@ -42,7 +47,7 @@ public class Stock {
         this.id = id;
     }
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date")
     public Timestamp getDate() {
         return date;
     }
@@ -90,12 +95,13 @@ public class Stock {
         this.currentPrice = currentPrice;
     }
 
-    @Column(name = "company_id")
-    public long getCompanyId() {
-        return companyId;
+    @OneToOne
+    @JoinColumn(name = "company_id")
+    public Company getCompany() {
+        return company;
     }
-    public void setCompanyId(long companyId) {
-        this.companyId = companyId;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     @Column(name = "volume", nullable = false)
@@ -104,5 +110,22 @@ public class Stock {
     }
     public void setVolume(int volume) {
         this.volume = volume;
+    }
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "stocks")
+    public List<Portfolio> getPortfolios() {
+        return portfolios;
+    }
+    public void setPortfolios(List<Portfolio> portfolios) {
+        this.portfolios = portfolios;
+    }
+
+    @Column(name = "symbol", nullable = false)
+    public String getSymbol() {
+        return symbol;
+    }
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 }

@@ -19,7 +19,8 @@ CREATE TABLE if not exists company
 CREATE TABLE if not exists stock
 (
     id bigserial PRIMARY KEY NOT NULL,
-    date timestamp without time zone NOT NULL,
+    symbol character varying(5),
+    date timestamp default current_date,
     open_price decimal NOT NULL,
     close_price decimal NOT NULL,
     high_price decimal NOT NULL,
@@ -33,8 +34,15 @@ CREATE TABLE if not exists portfolio
 (
     id bigserial PRIMARY KEY NOT NULL,
     profitability double precision,
-    creation_date timestamp without time zone NOT NULL,
+    creation_date timestamp without time zone default current_date,
     name character varying(50) NOT NULL,
     stock_id bigint REFERENCES stock (id),
     user_id bigint REFERENCES user_account (id)
+);
+
+create table if not exists added_stocks
+(
+    stock_id bigint not null references stock (id),
+    portfolio_id bigint not null references portfolio (id),
+    primary key (stock_id, portfolio_id)
 );
