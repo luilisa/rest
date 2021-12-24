@@ -7,6 +7,7 @@ import com.example.rest.repository.PortfolioRepository;
 import com.example.rest.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.w3c.dom.Node;
 
 
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1")
 public class UserController {
@@ -26,8 +28,12 @@ public class UserController {
         this.portfolioRepository = portfolioRepository;
     }
 
+
     @GetMapping("/users")
-    public List<UserEntity> getAllUsers() {
+    public List<? extends Object> getAllUsers(@RequestParam (value = "login", required = false) String login) {
+        if (login != null) {
+            return userRepository.findAllByLoginEquals(login);
+        }
         return userRepository.findAll();
     }
 

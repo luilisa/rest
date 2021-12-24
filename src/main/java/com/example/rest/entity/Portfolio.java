@@ -77,7 +77,6 @@ public class Portfolio {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @JsonIgnore
     public UserEntity getUserEntity() {
         return userEntity;
     }

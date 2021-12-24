@@ -54,12 +54,12 @@ public class UserEntity {
     public String toString() {
         return "User [id=" + id + ", login=" + login + ", password=" + password + " ]";
     }
-
-//    @OneToMany(mappedBy = "userEntity")
-//    public List<Portfolio> getPortfolios() {
-//        return portfolios;
-//    }
-//    public void setPortfolios(List<Portfolio> portfolios) {
-//        this.portfolios = portfolios;
-//    }
+    @JsonIgnore
+    @OneToMany(mappedBy = "userEntity")
+    public List<Portfolio> getPortfolios() {
+        return portfolios;
+    }
+    public void setPortfolios(List<Portfolio> portfolios) {
+        this.portfolios = portfolios;
+    }
 }

@@ -55,7 +55,7 @@ public class Stock {
         this.date = date;
     }
 
-    @Column(name = "open_price", nullable = false)
+    @Column(name = "open_price", nullable = true)
     public double getOpenPrice() {
         return openPrice;
     }
@@ -63,7 +63,7 @@ public class Stock {
         this.openPrice = openPrice;
     }
 
-    @Column(name = "close_price", nullable = false)
+    @Column(name = "close_price", nullable = true)
     public double getClosePrice() {
         return closePrice;
     }
@@ -71,7 +71,7 @@ public class Stock {
         this.closePrice = closePrice;
     }
 
-    @Column(name = "high_price", nullable = false)
+    @Column(name = "high_price", nullable = true)
     public double getHighPrice() {
         return highPrice;
     }
@@ -79,7 +79,7 @@ public class Stock {
         this.highPrice = highPrice;
     }
 
-    @Column(name = "low_price", nullable = false)
+    @Column(name = "low_price", nullable = true)
     public double getLowPrice() {
         return lowPrice;
     }
@@ -87,7 +87,7 @@ public class Stock {
         this.lowPrice = lowPrice;
     }
 
-    @Column(name = "current_price", nullable = false)
+    @Column(name = "current_price", nullable = true)
     public double getCurrentPrice() {
         return currentPrice;
     }
@@ -95,8 +95,9 @@ public class Stock {
         this.currentPrice = currentPrice;
     }
 
-    @OneToOne
-    @JoinColumn(name = "company_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "company_id", referencedColumnName = "id")
+    @JsonIgnore
     public Company getCompany() {
         return company;
     }
@@ -104,7 +105,7 @@ public class Stock {
         this.company = company;
     }
 
-    @Column(name = "volume", nullable = false)
+    @Column(name = "volume", nullable = true)
     public int getVolume() {
         return volume;
     }

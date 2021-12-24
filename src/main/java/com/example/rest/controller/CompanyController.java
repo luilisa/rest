@@ -3,6 +3,7 @@ package com.example.rest.controller;
 import com.example.rest.entity.Company;
 import com.example.rest.exception.ResourceNotFoundException;
 import com.example.rest.repository.CompanyRepository;
+import com.example.rest.repository.mini.CompanyMini;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,16 +21,25 @@ public class CompanyController {
     }
 
     @GetMapping("/companies")
-    public List<Company> getAllCompanies() {
-        return companyRepository.findAll();
+    public List<? extends Object> getAllCompanies(@RequestParam(required = false) Object expand) {
+        if (expand != null) {
+            return companyRepository.findAll();
+        } else {
+            return companyRepository.findAllCompany();
+        }
     }
 
     @GetMapping("/companies/{id}")
-    public ResponseEntity<Company> getCompanyById(@PathVariable(value = "id") Long companyId)
+    public ResponseEntity<Object> getCompanyById(@PathVariable(value = "id") Long companyId, @RequestParam(required = false) Object expand)
             throws ResourceNotFoundException {
-        Company company = companyRepository.findById(companyId)
+        Company expandCompany = companyRepository.findById(companyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Company not found for this id :: " + companyId));
-        return ResponseEntity.ok().body(company);
+        CompanyMini company = companyRepository.findCompanyById(companyId);
+        if (expand != null) {
+            return ResponseEntity.ok().body(expandCompany);
+        } else {
+            return ResponseEntity.ok().body(company);
+        }
     }
 
     @PostMapping("/companies")

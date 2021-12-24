@@ -29,11 +29,6 @@ public class PortfolioController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/portfolios")
-    public List<Portfolio> getAllPortfolios() {
-        return portfolioRepository.findAll();
-    }
-
     @GetMapping("/portfolios/{id}")
     public ResponseEntity<Portfolio> getPortfolioById(@PathVariable(value = "id") Long portfolioId)
             throws ResourceNotFoundException {
@@ -85,7 +80,7 @@ public class PortfolioController {
         return response;
     }
 
-    @PostMapping("/users/{userId}/portfolios")
+    @PostMapping("/portfolios/users/{userId}")
     public Portfolio createPortfolio(@PathVariable (value = "userId") Long userId,
                                   @RequestBody Portfolio portfolio) throws ResourceNotFoundException {
         return userRepository.findById(userId).map(userEntity -> {
@@ -94,9 +89,18 @@ public class PortfolioController {
         }).orElseThrow(() -> new ResourceNotFoundException("userid " + userId + " not found"));
     }
 
-    @GetMapping("/users/{userId}/portfolios")
-    public Page<Portfolio> getAllPortfolioByUserId(@PathVariable (value = "userId") Long userId,
-                                                   Pageable pageable) {
-        return portfolioRepository.findByUserEntityId(userId, pageable);
+
+    @GetMapping("/portfolios")
+    public List<? extends Object> getAllPortfolios(@RequestParam(required = false) Object expand, @RequestParam (value = "userId", required = false) Long userId) {
+        if (expand != null && userId != null) {
+            return portfolioRepository.findAllByUserEntityId(userId);
+        }
+        else if (expand == null && userId != null) {
+            return portfolioRepository.findAllPortfolioByUserEntityId(userId);
+        }
+        else if (expand == null && userId == null) {
+            return portfolioRepository.findAllPortfolio();
+        }
+        return portfolioRepository.findAll();
     }
 }
